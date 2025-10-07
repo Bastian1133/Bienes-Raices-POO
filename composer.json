@@ -1,0 +1,19 @@
+{
+    "name": "basti/bienes-raices-php_inicio",
+    "description": "Creando un proyecto con POO",
+    "type": "project",
+    "authors": [
+        {
+            "name": "SebastianG",
+            "email": "garcia.sebastian1133@gmail.com"
+        }
+    ],
+    "require": {
+        "intervention/image": "^3.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\" : "./classes"
+        }
+    }
+}
