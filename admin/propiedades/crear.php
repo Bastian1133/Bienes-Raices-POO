@@ -53,13 +53,7 @@
             // Guarda la imagen en el servidor
             $imagen->save(CARPETA_IMAGENES . $nombreImagen);
 
-            $resultado = $propiedad->guardar();
-            if($resultado) {
-
-                //Redireccionar al usuario
-                header('Location: /admin?resultado=1');
-
-            }
+            $propiedad->guardar();
         }
         
         

@@ -31,7 +31,7 @@ class Propiedad {
 
     public function __construct($args = [])
     {
-        $this->id = $args['id'] ?? ''; // '' para placeholder en caso de que no este el valor
+        $this->id = $args['id'] ?? null; // '' para placeholder en caso de que no este el valor
         $this->titulo = $args['titulo'] ?? '';
         $this->precio = $args['precio'] ?? '';
         $this->imagen = $args['imagen'] ?? '';
@@ -44,7 +44,7 @@ class Propiedad {
     }
 
     public function guardar() {
-        if(isset($this->id)) { // Si existe el id...
+        if(!is_null($this->id)) { // Si existe el campo id...
             // Actualizar
             $this->actualizar();
         } else {
@@ -66,8 +66,11 @@ class Propiedad {
         $query .= join("', '", array_values($atributos)). " ') "; // se aplica join a array_values para obtener un string con todos los valores de cada atributo, separado por ,
 
         $resultado = self::$db->query($query);
-
-        return $resultado;
+        
+        if($resultado) {
+            //Redireccionar al usuario
+            header('Location: /admin?resultado=1');
+        }
     }
 
     public function actualizar() {
@@ -81,14 +84,27 @@ class Propiedad {
 
         $query = "UPDATE propiedades SET ";
         $query .= join(', ', $valores);
-        $query.= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
-        $query.= " LIMIT 1 ";
+        $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= " LIMIT 1 ";
 
         $resultado = self::$db->query($query);
 
         if($resultado) {
             //Redireccionar al usuario
             header('Location: /admin?resultado=2');
+        }
+    }
+
+    // Eliminar un registro
+    public function eliminar() {
+        // Borrar fila de la base de datos
+        $query = "DELETE FROM propiedades WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+        $resultado = self::$db->query($query);
+
+        if($resultado) {
+            $this->borrarImagen();
+            //Redireccionar al usuario
+            header('Location: /admin?resultado=3');
         }
     }
 
@@ -112,6 +128,29 @@ class Propiedad {
         }
         
         return $sanitizado;
+    }
+
+    public function setImagen($imagen) {
+        // Elimina la imagen previa
+        if(!is_null($this->id)) {
+            $this->borrarImagen();
+        }
+
+        // Asignar al atributo de imagen el nombre de la imagen
+        if($imagen) {
+            $this->imagen = $imagen;
+        }
+    }
+
+    // Eliminar el archivo
+    public function borrarImagen() {
+
+        // Comrprobar si existe el archivo
+        $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
+
+        if($existeArchivo) {
+            unlink(CARPETA_IMAGENES . $this->imagen);
+        }
     }
 
     // Validacion
@@ -154,24 +193,6 @@ class Propiedad {
         }
 
         return self::$errores;
-    }
-
-    public function setImagen($imagen) {
-        // Elimina la imagen previa
-
-        if(isset($this->id)) {
-            // Comrprobar si existe el archivo
-            $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
-
-            if($existeArchivo) {
-                unlink(CARPETA_IMAGENES . $this->imagen);
-            }
-        }
-
-        // Asignar al atributo de imagen el nombre de la imagen
-        if($imagen) {
-            $this->imagen = $imagen;
-        }
     }
 
     // Listar todos los registros

@@ -19,24 +19,14 @@
         
             
         if($id) {
-            // Eliminar el archivo (imagen)
-            $query = "SELECT imagen FROM propiedades WHERE id = {$id}";
 
-            $resultado = mysqli_query($db, $query);
-            $propiedad = mysqli_fetch_assoc($resultado);
+            $propiedad = Propiedad::find($id);
+
+            $propiedad->eliminar();
 
             
-            unlink('../imagenes/' . $propiedad['imagen']); // Para eliminar un archivo
             
             
-            // Borrar fila de la base de datos
-            $query = "DELETE FROM propiedades WHERE id = {$id}";
-            $resultado = mysqli_query($db, $query);
-
-            if($resultado) {
-                //Redireccionar al usuario
-                header('Location: /admin?resultado=3');
-            }
         }
     }
     
