@@ -5,9 +5,11 @@
     estaAutenticado();
 
     use App\Propiedad;
+    use App\Vendedor;
 
     // Implementar un metodo para obtener todas las propiedades con Active Recrod
     $propiedades = Propiedad::all();
+    $vendedor = Vendedor::all();
 
 
     // Muestra mensaje condicional
