@@ -19,20 +19,20 @@ class ActiveRecord {
     }
 
     // Forma antes de php 8
-    public $id;
-    public $titulo;
-    public $precio;
-    public $imagen;
-    public $descripcion;
-    public $habitaciones;
-    public $wc;
-    public $estacionamiento;
-    public $creado;
-    public $vendedorId;
+    // public $id;
+    // public $titulo;
+    // public $precio;
+    // public $imagen;
+    // public $descripcion;
+    // public $habitaciones;
+    // public $wc;
+    // public $estacionamiento;
+    // public $creado;
+    // public $vendedorId;
 
-    public $nombre;
-    public $apellido;
-    public $telefono;
+    // public $nombre;
+    // public $apellido;
+    // public $telefono;
 
     public function guardar() {
         if(!is_null($this->id)) { // Si existe el campo id...
@@ -159,6 +159,15 @@ class ActiveRecord {
     public static function all() {
         $query = "SELECT * FROM " . static::$tabla; 
 
+        $resultado = self::consultarSQL($query);
+
+        return $resultado;
+    }
+
+    // Obtiene determinado numero de registros
+    public static function get($cantidad) {
+        $query = "SELECT * FROM " . static::$tabla . " LIMIT " . $cantidad; 
+        
         $resultado = self::consultarSQL($query);
 
         return $resultado;

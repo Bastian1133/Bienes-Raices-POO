@@ -4,6 +4,7 @@
     // Verifiar sesion
     estaAutenticado();
 
+    // Importar las clases
     use App\Propiedad;
     use App\Vendedor;
 
@@ -16,10 +17,11 @@
     $resultado = $_GET['resultado'] ?? null; // ?? null es un placeholder que actua si no esta presente el get definido y entonces le asigna null por defecto 
 
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        // Validar id
         $id = $_POST['id'];
         $id = filter_var($id, FILTER_VALIDATE_INT);
         
-            
         if($id) {
 
             $tipo = $_POST['tipo'];
@@ -47,13 +49,12 @@
 
     <main class="contenedor seccion">
         <h1>Administrador de Bienes Raices</h1>
-        <?php if(intval($resultado) === 1): ?>
-            <p class="alerta exito">Creado Correctamente</p>
-        <?php elseif(intval($resultado) === 2): ?>
-            <p class="alerta exito">Actualizado Correctamente</p>
-        <?php elseif(intval($resultado) === 3): ?>
-            <p class="alerta exito">Eliminado Correctamente</p>
-        <?php endif; ?>
+        
+        <?php
+            $mensaje = mostrarNotificacion(intval($resultado));
+            if($mensaje) { ?>
+                <p class="alerta exito"><?php echo s($mensaje) ?></p>
+        <?php } ?>
 
         <a class="boton boton-verde" href="/admin/propiedades/crear.php">Nueva Propiedad</a>
         <a class="boton boton-amarillo" href="/admin/vendedores/crear.php">Nuevo(a) Vendedor</a>
@@ -109,7 +110,7 @@
                     <td><?php echo $vendedor->nombre . " " . $vendedor->apellido; ?> </td>
                     <td><?php echo $vendedor->telefono; ?> </td>
                     <td>
-                        <a class="boton-amarillo-block" href="/admin/vendedores/actualizar.php?id=<?php echo $propiedad->id; ?>">Actualizar</a>
+                        <a class="boton-amarillo-block" href="/admin/vendedores/actualizar.php?id=<?php echo $vendedor->id; ?>">Actualizar</a>
                         
                         <form class="w-100" action="/admin/index.php" method="POST">
                             <input type="hidden" name="id" value="<?php echo $vendedor->id; ?>"> <!-- input tipo hidden para que no sea visible pero permita obtener datos con POST -->
