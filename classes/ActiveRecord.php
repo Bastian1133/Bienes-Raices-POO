@@ -18,6 +18,22 @@ class ActiveRecord {
         self::$db = $database;
     }
 
+    // Forma antes de php 8
+    public $id;
+    public $titulo;
+    public $precio;
+    public $imagen;
+    public $descripcion;
+    public $habitaciones;
+    public $wc;
+    public $estacionamiento;
+    public $creado;
+    public $vendedorId;
+
+    public $nombre;
+    public $apellido;
+    public $telefono;
+
     public function guardar() {
         if(!is_null($this->id)) { // Si existe el campo id...
             // Actualizar
@@ -39,7 +55,7 @@ class ActiveRecord {
         $query .= /* .= Forma de concatenar */ join(', ', array_keys($atributos)); // Join crea un nuevo string a partir de un arreglo, se pone el espaciador y el array keys para tener un string de los nombres de los atributos  
         $query .= " ) VALUES (' ";
         $query .= join("', '", array_values($atributos)). " ') "; // se aplica join a array_values para obtener un string con todos los valores de cada atributo, separado por ,
-
+        
         $resultado = self::$db->query($query);
         
         if($resultado) {
@@ -86,8 +102,8 @@ class ActiveRecord {
     //Identificar y unir los atributos de la BD
     public function atributos() {
         $atributos = [];
-        foreach(self::$columnasDB as $columna) {
-            if($columna === 'id') continue; // Para que ignore el atributo de columna y no lo incluya en el arreglo de atributos
+        foreach(static::$columnasDB as $columna) {
+            if($columna === 'id') continue; // Para que ignore el atributo de id y no lo incluya en el arreglo de atributos
             $atributos[$columna] = $this->$columna;
         }
         return $atributos;
@@ -164,7 +180,7 @@ class ActiveRecord {
         // Iterar los resultados
         $array = [];
         while($registro = $resultado->fetch_assoc()) {
-            $array[] = self::crearObjeto($registro);
+            $array[] = static::crearObjeto($registro);
         }
 
         // Liberar la memoria

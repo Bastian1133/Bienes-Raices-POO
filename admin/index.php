@@ -9,7 +9,7 @@
 
     // Implementar un metodo para obtener todas las propiedades con Active Recrod
     $propiedades = Propiedad::all();
-    $vendedor = Vendedor::all();
+    $vendedores = Vendedor::all();
 
 
     // Muestra mensaje condicional
@@ -22,13 +22,22 @@
             
         if($id) {
 
-            $propiedad = Propiedad::find($id);
+            $tipo = $_POST['tipo'];
 
-            $propiedad->eliminar();
+            if(validarTipoContenido($tipo)) {
 
-            
-            
-            
+                // Compara lo que vamos a eliminar
+                if($tipo === 'vendedor') {
+
+                    $vendedor = Vendedor::find($id);
+                    $vendedor->eliminar();
+
+                } else if($tipo === 'propiedad') {
+
+                    $propiedad = Propiedad::find($id);
+                    $propiedad->eliminar();
+                }
+            }
         }
     }
     
@@ -39,15 +48,17 @@
     <main class="contenedor seccion">
         <h1>Administrador de Bienes Raices</h1>
         <?php if(intval($resultado) === 1): ?>
-            <p class="alerta exito">Anuncio Creado Correctamente</p>
+            <p class="alerta exito">Creado Correctamente</p>
         <?php elseif(intval($resultado) === 2): ?>
-            <p class="alerta exito">Anuncio Actualizado Correctamente</p>
+            <p class="alerta exito">Actualizado Correctamente</p>
         <?php elseif(intval($resultado) === 3): ?>
-            <p class="alerta exito">Anuncio Eliminado Correctamente</p>
+            <p class="alerta exito">Eliminado Correctamente</p>
         <?php endif; ?>
-        <a class="boton boton-verde" href="/admin/propiedades/crear.php">Nueva Propiedad</a>
-        
 
+        <a class="boton boton-verde" href="/admin/propiedades/crear.php">Nueva Propiedad</a>
+        <a class="boton boton-amarillo" href="/admin/vendedores/crear.php">Nuevo(a) Vendedor</a>
+        
+        <h2>Propiedades</h2>
         <table class="propiedades">
             <thead>
                 <tr>
@@ -71,6 +82,38 @@
                         
                         <form class="w-100" action="/admin/index.php" method="POST">
                             <input type="hidden" name="id" value="<?php echo $propiedad->id; ?>"> <!-- input tipo hidden para que no sea visible pero permita obtener datos con POST -->
+                            <input type="hidden" name="tipo" value="propiedad"> 
+                            <input class="boton-rojo-block" type="submit" value="Eliminar">
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <h2>Vendedores</h2>
+        <table class="propiedades">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody> <!-- Mostrar los resultados -->
+                <?php foreach($vendedores as $vendedor): ?>
+                <tr>
+                    <td><?php echo $vendedor->id; ?> </td>
+                    <td><?php echo $vendedor->nombre . " " . $vendedor->apellido; ?> </td>
+                    <td><?php echo $vendedor->telefono; ?> </td>
+                    <td>
+                        <a class="boton-amarillo-block" href="/admin/vendedores/actualizar.php?id=<?php echo $propiedad->id; ?>">Actualizar</a>
+                        
+                        <form class="w-100" action="/admin/index.php" method="POST">
+                            <input type="hidden" name="id" value="<?php echo $vendedor->id; ?>"> <!-- input tipo hidden para que no sea visible pero permita obtener datos con POST -->
+                            <input type="hidden" name="tipo" value="vendedor"> 
                             <input class="boton-rojo-block" type="submit" value="Eliminar">
                         </form>
                     </td>
@@ -80,10 +123,7 @@
         </table>
     </main>
 
-    <?php 
-
-    // Cerrar la conexion (ocional, php lo cierra por si solo)
-    mysqli_close($db);
+    <?php
 
     incluirTemplate('footer');
 ?>
